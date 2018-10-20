@@ -4,6 +4,8 @@ import gym
 import gym_duckietown_agent  # DO NOT CHANGE THIS IMPORT (the environments are defined here)
 from duckietown_challenges import wrap_solution, ChallengeSolution, ChallengeInterfaceSolution
 
+from wrappers import SteeringToWheelVelWrapper
+
 
 def solve(params, cis):
     # python has dynamic typing, the line below can help IDEs with autocompletion
@@ -41,6 +43,9 @@ def solve(params, cis):
     env = ImgWrapper(env)  # to make the images from 160x120x3 into 3x120x160
     env = ActionWrapper(env)
 
+    # you ONLY need this wrapper if you trained your policy on [speed,steering angle]
+    # instead [left speed, right speed]
+    env = SteeringToWheelVelWrapper(env)
 
     # === END SUBMISSION ===
 

@@ -3,11 +3,6 @@
 <a href="http://aido.duckietown.org"><img width="200" src="https://www.duckietown.org/wp-content/uploads/2018/07/AIDO-768x512.png"/></a>
 
 
-## Warning
-
-The policy that ships with this template currently predicts the action as `[speed,steering angle]` and not `[speed left wheel, speed right wheel] `. You can still use this template. This just means that until we added the right inverse kinematics action wrapper, the submission will just make simulated donuts on the simulated road.
-But since you're supposed to put your own model in here anyway, this shouldn't be that big of a deal.
-
 ## Quickstart
 
 To make a submission,... 
