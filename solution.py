@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import gym
+# noinspection PyUnresolvedReferences
 import gym_duckietown_agent  # DO NOT CHANGE THIS IMPORT (the environments are defined here)
 from duckietown_challenges import wrap_solution, ChallengeSolution, ChallengeInterfaceSolution
 
@@ -27,7 +28,7 @@ def solve(params, cis):
     from model import DDPG
 
     model = DDPG(state_dim=(3, 120, 160), action_dim=2, max_action=1, net_type="cnn")
-    model.load("model","models")
+    model.load("model", "models")
 
     # you have to make sure that you're wrapping at least the actions
     # and observations in the same as during training so that your model
@@ -82,15 +83,10 @@ class Submission(ChallengeSolution):
         params = cis.get_challenge_parameters()
         cis.info('Parameters: %s' % params)
 
-        output = {'status': 'success'}
-        try:
-            cis.info('Starting.')
-            solve(params, cis)  # let's try to solve the challenge, exciting ah?
-        except Exception as e:
-            output['status'] = 'failure'
-            output['msg'] = str(e)
+        cis.info('Starting.')
+        solve(params, cis)
 
-        cis.set_solution_output_dict(output)
+        cis.set_solution_output_dict({})
         cis.info('Finished.')
 
 
