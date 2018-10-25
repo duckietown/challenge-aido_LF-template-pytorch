@@ -22,20 +22,6 @@ def solve(params, cis):
 
     # === BEGIN SUBMISSION ===
 
-    # HERE YOU NEED TO CREATE THE POLICY NETWORK SAME AS YOU DID IN THE TRAINING CODE
-    # if you aren't using the DDPG baseline code, then make sure to copy your model
-    # into the model.py file and that it has a model.predict(state) method.
-    from model import DDPG
-
-    model = DDPG(state_dim=(3, 120, 160), action_dim=2, max_action=1, net_type="cnn")
-    model.load("model", "models")
-
-    # you have to make sure that you're wrapping at least the actions
-    # and observations in the same as during training so that your model
-    # receives the same kind of input, because that's what it's trained for
-    # (for example if your model is trained on grayscale images and here
-    # you _don't_ make it grayscale too, then your model wont work)
-
     # If you created custom wrappers, you also need to copy them into this folder.
 
     from wrappers import NormalizeWrapper, ImgWrapper, ActionWrapper
@@ -47,6 +33,20 @@ def solve(params, cis):
     # you ONLY need this wrapper if you trained your policy on [speed,steering angle]
     # instead [left speed, right speed]
     env = SteeringToWheelVelWrapper(env)
+
+    # you have to make sure that you're wrapping at least the actions
+    # and observations in the same as during training so that your model
+    # receives the same kind of input, because that's what it's trained for
+    # (for example if your model is trained on grayscale images and here
+    # you _don't_ make it grayscale too, then your model wont work)
+
+    # HERE YOU NEED TO CREATE THE POLICY NETWORK SAME AS YOU DID IN THE TRAINING CODE
+    # if you aren't using the DDPG baseline code, then make sure to copy your model
+    # into the model.py file and that it has a model.predict(state) method.
+    from model import DDPG
+
+    model = DDPG(state_dim=env.observation_space.shape, action_dim=2, max_action=1, net_type="cnn")
+    model.load("model", "models")
 
     # === END SUBMISSION ===
 
