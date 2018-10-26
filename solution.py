@@ -9,17 +9,6 @@ import gym_duckietown_agent  # DO NOT CHANGE THIS IMPORT (the environments are d
 from duckietown_challenges import wrap_solution, ChallengeSolution, ChallengeInterfaceSolution, InvalidEnvironment
 from wrappers import SteeringToWheelVelWrapper
 
-# expect_shape = (480, 640, 3)
-# this is because we have ImgWrapper
-expect_shape = (3, 480, 640)
-
-
-def check_valid_observations(observations):
-    assert isinstance(observations, np.ndarray), type(observations)
-    if observations.shape != expect_shape:
-        msg = 'I expected size %s, while I got size %s' % (expect_shape, observations.shape)
-        raise InvalidEnvironment(msg)
-
 
 def solve(params, cis):
     # python has dynamic typing, the line below can help IDEs with autocompletion
@@ -37,10 +26,11 @@ def solve(params, cis):
 
     # If you created custom wrappers, you also need to copy them into this folder.
 
-    from wrappers import NormalizeWrapper, ImgWrapper, ActionWrapper
+    from wrappers import NormalizeWrapper, ImgWrapper, ActionWrapper, ResizeWrapper
 
+    env = ResizeWrapper(env)
     env = NormalizeWrapper(env)
-    # to make the images from (480, 640, 3) to (3, 480, 640)
+    # to make the images pytorch-conv-compatible
     env = ImgWrapper(env)
     env = ActionWrapper(env)
 
@@ -70,7 +60,6 @@ def solve(params, cis):
         cis.info('Reset environment')
         observation = env.reset()
 
-        check_valid_observations(observation)
         # While there are no signal of completion (simulation done)
         # we run the predictions for a number of episodes, don't worry, we have the control on this part
         while True:
@@ -78,7 +67,6 @@ def solve(params, cis):
             action = model.predict(observation)
             # we tell the environment to perform this action and we get some info back in OpenAI Gym style
             observation, reward, done, info = env.step(action)
-            check_valid_observations(observation)
             # here you may want to compute some stats, like how much reward are you getting
             # notice, this reward may no be associated with the challenge score.
 
