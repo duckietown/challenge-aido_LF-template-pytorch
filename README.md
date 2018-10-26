@@ -3,31 +3,6 @@
 <a href="http://aido.duckietown.org"><img width="200" src="https://www.duckietown.org/wp-content/uploads/2018/07/AIDO-768x512.png"/></a>
 
 
-## Quickstart
-
-To make a submission,... 
-    
-1) Make sure you have the duckietown shell installed and updated:
-
-        pip2 install --no-cache-dir --user -U duckietown-shell
-    
-    (Yes, I know it's Py2 for now... we are working on making it Py3-compatible too)
-
-2) Clone this repo:
-
-        git clone https://github.com/duckietown/challenge-aido1_LF1-template-pytorch.git
-
-3) Change into the directory that you cloned:
-    
-        cd challenge-aido1_LF1-template-pytorch
-        
-4) Submit :)
-
-        dts challenges submit
-        
-5) Once this finishes, you'll receive a link where you can follow the progress of your evaluation.
-
-
 ## Template "PyTorch template" for challenge `aido1_LF1-v3`
 
 This is a template for one of the challenges in the [the AI Driving Olympics](http://aido.duckietown.org/).
@@ -36,7 +11,7 @@ The [online description of this challenge is here][online].
 
 For submitting, please follow [the instructions available in the book][book].
  
-[book]: http://docs.duckietown.org/DT18/AIDO/out/
+[book]: http://docs.duckietown.org/DT18/AIDO/out/pytorch-template
 
 [online]: https://challenges.duckietown.org/v3/humans/challenges/aido1_LF1-v3
 
