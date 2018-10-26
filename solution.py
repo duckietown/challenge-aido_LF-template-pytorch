@@ -1,11 +1,24 @@
 #!/usr/bin/env python
+import traceback
 
 import gym
+import numpy as np
+
 # noinspection PyUnresolvedReferences
 import gym_duckietown_agent  # DO NOT CHANGE THIS IMPORT (the environments are defined here)
-from duckietown_challenges import wrap_solution, ChallengeSolution, ChallengeInterfaceSolution
-
+from duckietown_challenges import wrap_solution, ChallengeSolution, ChallengeInterfaceSolution, InvalidEnvironment
 from wrappers import SteeringToWheelVelWrapper
+
+# expect_shape = (480, 640, 3)
+# this is because we have ImgWrapper
+expect_shape = (3, 480, 640)
+
+
+def check_valid_observations(observations):
+    assert isinstance(observations, np.ndarray), type(observations)
+    if observations.shape != expect_shape:
+        msg = 'I expected size %s, while I got size %s' % (expect_shape, observations.shape)
+        raise InvalidEnvironment(msg)
 
 
 def solve(params, cis):
@@ -27,7 +40,8 @@ def solve(params, cis):
     from wrappers import NormalizeWrapper, ImgWrapper, ActionWrapper
 
     env = NormalizeWrapper(env)
-    env = ImgWrapper(env)  # to make the images from 160x120x3 into 3x120x160
+    # to make the images from (480, 640, 3) to (3, 480, 640)
+    env = ImgWrapper(env)
     env = ActionWrapper(env)
 
     # you ONLY need this wrapper if you trained your policy on [speed,steering angle]
@@ -46,33 +60,48 @@ def solve(params, cis):
     from model import DDPG
 
     model = DDPG(state_dim=env.observation_space.shape, action_dim=2, max_action=1, net_type="cnn")
-    model.load("model", "models")
 
-    # === END SUBMISSION ===
+    try:
+        model.load("model", "models")
 
-    # Then we make sure we have a connection with the environment and it is ready to go
-    cis.info('Reset environment')
-    observation = env.reset()
-    # While there are no signal of completion (simulation done)
-    # we run the predictions for a number of episodes, don't worry, we have the control on this part
-    while True:
-        # we passe the observation to our model, and we get an action in return
-        action = model.predict(observation)
-        # we tell the environment to perform this action and we get some info back in OpenAI Gym style
-        observation, reward, done, info = env.step(action)
-        # here you may want to compute some stats, like how much reward are you getting
-        # notice, this reward may no be associated with the challenge score.
+        # === END SUBMISSION ===
 
-        # it is important to check for this flag, the Evalution Engine will let us know when should we finish
-        # if we are not careful with this the Evaluation Engine will kill our container and we will get no score
-        # from this submission
-        if 'simulation_done' in info:
-            break
-        if done:
-            env.reset()
+        # Then we make sure we have a connection with the environment and it is ready to go
+        cis.info('Reset environment')
+        observation = env.reset()
 
-    # release CPU/GPU resources, let's be friendly with other users that may need them
-    model.close()
+        check_valid_observations(observation)
+        # While there are no signal of completion (simulation done)
+        # we run the predictions for a number of episodes, don't worry, we have the control on this part
+        while True:
+            # we passe the observation to our model, and we get an action in return
+            action = model.predict(observation)
+            # we tell the environment to perform this action and we get some info back in OpenAI Gym style
+            observation, reward, done, info = env.step(action)
+            check_valid_observations(observation)
+            # here you may want to compute some stats, like how much reward are you getting
+            # notice, this reward may no be associated with the challenge score.
+
+            # it is important to check for this flag, the Evalution Engine will let us know when should we finish
+            # if we are not careful with this the Evaluation Engine will kill our container and we will get no score
+            # from this submission
+            if 'simulation_done' in info:
+                cis.info('simulation_done received.')
+                break
+            if done:
+                cis.info('Episode done; calling reset()')
+                env.reset()
+
+    finally:
+        # release CPU/GPU resources, let's be friendly with other users that may need them
+        cis.info('Releasing resources')
+        try:
+            model.close()
+        except:
+            msg = 'Could not call model.close():\n%s' % traceback.format_exc()
+            cis.error(msg)
+    cis.info('Graceful exit of solve()')
+
 
 
 class Submission(ChallengeSolution):

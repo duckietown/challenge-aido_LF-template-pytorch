@@ -165,6 +165,10 @@ class DDPG(object):
         self.critic_target.load_state_dict(self.critic.state_dict())
         self.critic_optimizer = torch.optim.Adam(self.critic.parameters())
 
+    def close(self):
+        # TODO: release resources
+        pass
+
     def predict(self, state):
         # just making sure the state has the correct format, otherwise the prediction doesn't work
         assert state.shape[0] == 3
