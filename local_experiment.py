@@ -12,7 +12,7 @@ from wrappers import SteeringToWheelVelWrapper
 from env import launch_env
 
 def launch_local_experiment(environment):
-    # python has dynamic typing, the line below can help IDEs with autocompletion
+    # Use our launcher
     env = launch_env(environment)
 
     # === BEGIN SUBMISSION ===
