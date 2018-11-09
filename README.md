@@ -11,7 +11,7 @@ The [online description of this challenge is here][online].
 
 For submitting, please follow [the instructions available in the book][book].
  
-[book]: http://docs.duckietown.org/DT18/AIDO/out/pytorch-template.html
+[book]: http://docs.duckietown.org/DT18/AIDO/out/pytorch_template.html
 
 [online]: https://challenges.duckietown.org/v3/humans/challenges/aido1_LF1-v3
 
