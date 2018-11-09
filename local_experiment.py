@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import torch
 import traceback
 
 import gym
@@ -10,6 +11,7 @@ from duckietown_challenges import wrap_solution, ChallengeSolution, ChallengeInt
 from wrappers import SteeringToWheelVelWrapper
 
 from env import launch_env
+
 
 def launch_local_experiment(environment):
     # Use our launcher
@@ -44,10 +46,12 @@ def launch_local_experiment(environment):
 
     model = DDPG(state_dim=env.observation_space.shape, action_dim=2, max_action=1, net_type="cnn")
 
-    try:
-        model.load("model", "models")
+    model.load("model", "models", for_inference=True)
 
-        # === END SUBMISSION ===
+    # === END SUBMISSION ===
+
+    # deactivate the automatic differentiation (i.e. the autograd engine, for calculating gradients)
+    with torch.no_grad():
         observation = env.reset()
 
         # While there are no signal of completion (simulation done)
