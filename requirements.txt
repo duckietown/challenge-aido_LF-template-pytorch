@@ -9,3 +9,6 @@ opencv-python
 
 -e git://github.com/duckietown/duckietown-world.git@aido2_lf_r1#egg=duckietown-world
 -e git://github.com/duckietown/duckietown-challenges.git@v4#egg=duckietown-challenges
+
+torch
+torchvision

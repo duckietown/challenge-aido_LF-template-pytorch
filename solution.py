@@ -8,19 +8,14 @@ from aido_schemas import EpisodeStart, protocol_agent_duckiebot1, PWMCommands, D
     wrap_direct, Context, Duckiebot1Observations, JPGImage
 
 from model import DDPG
-from wrappers import *
-
-
-@dataclass
-class PytorchRLTemplateAgentConfig:
-    current_image: np.ndarray = np.zeros((480, 640, 3))
+from wrappers import DTPytorchWrapper
 
 
 class PytorchRLTemplateAgent:
     def __init__(self, load_model=False, model_path=None):
-        config: PytorchRLTemplateAgentConfig = PytorchRLTemplateAgentConfig()
+        self.preprocessor = DTPytorchWrapper()
+        self.model = DDPG(state_dim=self.preprocessor.shape, action_dim=2, max_action=1, net_type="cnn")
 
-        self.model = DDPG(state_dim=self.config.current_image.shape, action_dim=2, max_action=1, net_type="cnn")
         if load_model:
             fp = model_path if model_path else "model"
             self.model.load(fp, "models", for_inference=True)
@@ -37,6 +32,7 @@ class PytorchRLTemplateAgent:
     def on_received_observations(self, data: Duckiebot1Observations):
         camera: JPGImage = data.camera
         self.config.current_image = jpg2rgb(camera.jpg_data)
+        self.config.current_image = self.preprocessor.preprocess(self.config.current_image)
 
     def compute_action(self, observation):
         action = self.model.predict(observation)
@@ -44,7 +40,7 @@ class PytorchRLTemplateAgent:
         return action
 
     def on_received_get_commands(self, context: Context):
-        pwm_left, pwm_right = compute_action(self.config.current_image)
+        pwm_left, pwm_right = self.compute_action(self.config.current_image)
 
         grey = RGB(0.0, 0.0, 0.0)
         led_commands = LEDSCommands(grey, grey, grey, grey, grey)
@@ -62,7 +58,7 @@ def jpg2rgb(image_data: bytes) -> np.ndarray:
     import io
     im = Image.open(io.BytesIO(image_data))
     im = im.convert('RGB')
-    data = np.array(im)
+    data = np.array(im) 
     assert data.ndim == 3
     assert data.dtype == np.uint8
     return data
