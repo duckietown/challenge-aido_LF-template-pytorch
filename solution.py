@@ -10,17 +10,12 @@ from aido_schemas import EpisodeStart, protocol_agent_duckiebot1, PWMCommands, D
 from model import DDPG
 from wrappers import DTPytorchWrapper
 
-@dataclass
-class PytorchRLTemplateAgentConfig:
-    current_image: np.ndarray = np.zeros((120, 160, 3))
-
 
 class PytorchRLTemplateAgent:
-    config: PytorchRLTemplateAgentConfig = PytorchRLTemplateAgentConfig()
-    
     def __init__(self, load_model=False, model_path=None):
         self.preprocessor = DTPytorchWrapper()
         self.model = DDPG(state_dim=self.preprocessor.shape, action_dim=2, max_action=1, net_type="cnn")
+        self.current_image = None
 
         if load_model:
             fp = model_path if model_path else "model"
@@ -37,8 +32,8 @@ class PytorchRLTemplateAgent:
 
     def on_received_observations(self, data: Duckiebot1Observations):
         camera: JPGImage = data.camera
-        self.config.current_image = jpg2rgb(camera.jpg_data)
-        self.config.current_image = self.preprocessor.preprocess(self.config.current_image)
+        obs = jpg2rgb(camera.jpg_data)
+        self.current_image = self.preprocessor.preprocess(obs)
 
     def compute_action(self, observation):
         action = self.model.predict(observation)
@@ -46,7 +41,7 @@ class PytorchRLTemplateAgent:
         return action
 
     def on_received_get_commands(self, context: Context):
-        pwm_left, pwm_right = self.compute_action(self.config.current_image)
+        pwm_left, pwm_right = self.compute_action(self.current_image)
 
         grey = RGB(0.0, 0.0, 0.0)
         led_commands = LEDSCommands(grey, grey, grey, grey, grey)
