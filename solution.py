@@ -16,6 +16,8 @@ class PytorchRLTemplateAgentConfig:
 
 
 class PytorchRLTemplateAgent:
+    config: PytorchRLTemplateAgentConfig = PytorchRLTemplateAgentConfig()
+    
     def __init__(self, load_model=False, model_path=None):
         self.preprocessor = DTPytorchWrapper()
         self.model = DDPG(state_dim=self.preprocessor.shape, action_dim=2, max_action=1, net_type="cnn")
