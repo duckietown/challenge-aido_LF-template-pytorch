@@ -1,99 +1,74 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+from dataclasses import dataclass
+from typing import Tuple
 
-import gym
-import gym_duckietown_agent  # DO NOT CHANGE THIS IMPORT (the environments are defined here)
-from duckietown_challenges import wrap_solution, ChallengeSolution, ChallengeInterfaceSolution
+import numpy as np
 
-from wrappers import SteeringToWheelVelWrapper
+from aido_schemas import EpisodeStart, protocol_agent_duckiebot1, PWMCommands, Duckiebot1Commands, LEDSCommands, RGB, \
+    wrap_direct, Context, Duckiebot1Observations, JPGImage
 
-
-def solve(params, cis):
-    # python has dynamic typing, the line below can help IDEs with autocompletion
-    assert isinstance(cis, ChallengeInterfaceSolution)
-    # after this cis. will provide you with some autocompletion in some IDEs (e.g.: pycharm)
-    cis.info('Creating model.')
-    # you can have logging capabilties through the solution interface (cis).
-    # the info you log can be retrieved from your submission files.
-
-    # We get environment from the Evaluation Engine
-    cis.info('Making environment')
-    env = gym.make(params['env'])
-
-    # === BEGIN SUBMISSION ===
-
-    # HERE YOU NEED TO CREATE THE POLICY NETWORK SAME AS YOU DID IN THE TRAINING CODE
-    # if you aren't using the DDPG baseline code, then make sure to copy your model
-    # into the model.py file and that it has a model.predict(state) method.
-    from model import DDPG
-
-    model = DDPG(state_dim=(3, 120, 160), action_dim=2, max_action=1, net_type="cnn")
-    model.load("model","models")
-
-    # you have to make sure that you're wrapping at least the actions
-    # and observations in the same as during training so that your model
-    # receives the same kind of input, because that's what it's trained for
-    # (for example if your model is trained on grayscale images and here
-    # you _don't_ make it grayscale too, then your model wont work)
-
-    # If you created custom wrappers, you also need to copy them into this folder.
-
-    from wrappers import NormalizeWrapper, ImgWrapper, ActionWrapper
-
-    env = NormalizeWrapper(env)
-    env = ImgWrapper(env)  # to make the images from 160x120x3 into 3x120x160
-    env = ActionWrapper(env)
-
-    # you ONLY need this wrapper if you trained your policy on [speed,steering angle]
-    # instead [left speed, right speed]
-    env = SteeringToWheelVelWrapper(env)
-
-    # === END SUBMISSION ===
-
-    # Then we make sure we have a connection with the environment and it is ready to go
-    cis.info('Reset environment')
-    observation = env.reset()
-    # While there are no signal of completion (simulation done)
-    # we run the predictions for a number of episodes, don't worry, we have the control on this part
-    while True:
-        # we passe the observation to our model, and we get an action in return
-        action = model.predict(observation)
-        # we tell the environment to perform this action and we get some info back in OpenAI Gym style
-        observation, reward, done, info = env.step(action)
-        # here you may want to compute some stats, like how much reward are you getting
-        # notice, this reward may no be associated with the challenge score.
-
-        # it is important to check for this flag, the Evalution Engine will let us know when should we finish
-        # if we are not careful with this the Evaluation Engine will kill our container and we will get no score
-        # from this submission
-        if 'simulation_done' in info:
-            break
-        if done:
-            env.reset()
-
-    # release CPU/GPU resources, let's be friendly with other users that may need them
-    model.close()
+from model import DDPG
+from wrappers import DTPytorchWrapper
 
 
-class Submission(ChallengeSolution):
-    def run(self, cis):
-        assert isinstance(cis, ChallengeInterfaceSolution)  # this is a hack that would help with autocompletion
+class PytorchRLTemplateAgent:
+    def __init__(self, load_model=False, model_path=None):
+        self.preprocessor = DTPytorchWrapper()
+        self.model = DDPG(state_dim=self.preprocessor.shape, action_dim=2, max_action=1, net_type="cnn")
+        self.current_image = None
 
-        # get the configuration parameters for this challenge
-        params = cis.get_challenge_parameters()
-        cis.info('Parameters: %s' % params)
+        if load_model:
+            fp = model_path if model_path else "model"
+            self.model.load(fp, "models", for_inference=True)
 
-        output = {'status': 'success'}
-        try:
-            cis.info('Starting.')
-            solve(params, cis)  # let's try to solve the challenge, exciting ah?
-        except Exception as e:
-            output['status'] = 'failure'
-            output['msg'] = str(e)
+    def init(self, context: Context):
+        context.info('init()')
 
-        cis.set_solution_output_dict(output)
-        cis.info('Finished.')
+    def on_received_seed(self, data: int):
+        np.random.seed(data)
+
+    def on_received_episode_start(self, context: Context, data: EpisodeStart):
+        context.info(f'Starting episode "{data.episode_name}".')
+
+    def on_received_observations(self, data: Duckiebot1Observations):
+        camera: JPGImage = data.camera
+        obs = jpg2rgb(camera.jpg_data)
+        self.current_image = self.preprocessor.preprocess(obs)
+
+    def compute_action(self, observation):
+        action = self.model.predict(observation)
+
+        return action
+
+    def on_received_get_commands(self, context: Context):
+        pwm_left, pwm_right = self.compute_action(self.current_image)
+
+        grey = RGB(0.0, 0.0, 0.0)
+        led_commands = LEDSCommands(grey, grey, grey, grey, grey)
+        pwm_commands = PWMCommands(motor_left=pwm_left, motor_right=pwm_right)
+        commands = Duckiebot1Commands(pwm_commands, led_commands)
+        context.write('commands', commands)
+
+    def finish(self, context: Context):
+        context.info('finish()')
+
+
+def jpg2rgb(image_data: bytes) -> np.ndarray:
+    """ Reads JPG bytes as RGB"""
+    from PIL import Image
+    import io
+    im = Image.open(io.BytesIO(image_data))
+    im = im.convert('RGB')
+    data = np.array(im) 
+    assert data.ndim == 3
+    assert data.dtype == np.uint8
+    return data
+
+def main():
+    node = PytorchRLTemplateAgent()
+    protocol = protocol_agent_duckiebot1
+    wrap_direct(node=node, protocol=protocol)
 
 
 if __name__ == '__main__':
-    print('Starting submission')
-    wrap_solution(Submission())
+    main()

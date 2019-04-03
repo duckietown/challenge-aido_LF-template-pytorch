@@ -165,12 +165,13 @@ class DDPG(object):
         self.critic_target.load_state_dict(self.critic.state_dict())
         self.critic_optimizer = torch.optim.Adam(self.critic.parameters())
 
-    def predict(self, state):
+    def close(self):
+        # TODO: release resources
+        pass
 
+    def predict(self, state):
         # just making sure the state has the correct format, otherwise the prediction doesn't work
         assert state.shape[0] == 3
-        assert state.shape[1] == 120
-        assert state.shape[2] == 160
 
         if self.flat:
             state = torch.FloatTensor(state.reshape(1, -1)).to(device)
@@ -224,6 +225,12 @@ class DDPG(object):
         torch.save(self.actor.state_dict(), '{}/{}_actor.pth'.format(directory, filename))
         torch.save(self.critic.state_dict(), '{}/{}_critic.pth'.format(directory, filename))
 
-    def load(self, filename, directory):
+    def load(self, filename, directory, for_inference=False):
         self.actor.load_state_dict(torch.load('{}/{}_actor.pth'.format(directory, filename), map_location=device))
         self.critic.load_state_dict(torch.load('{}/{}_critic.pth'.format(directory, filename), map_location=device))
+        if for_inference:
+            # If we're not learning anymore, set model layers to
+            # test mode (this disables dropout and changes batchnorm).
+            # This does NOT affect autograd.
+            self.actor.eval()
+            self.critic.eval()

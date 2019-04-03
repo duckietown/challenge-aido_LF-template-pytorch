@@ -1,7 +1,6 @@
 # Definition of Submission container
 
-# We start from tensorflow-gpu image
-FROM duckietown/pytorch-v0.4.1-py27-cuda9.0
+FROM duckietown/aido2-base-python3:v4
 
 # DO NOT MODIFY: your submission won't run if you do
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
