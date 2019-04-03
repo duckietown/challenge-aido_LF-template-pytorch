@@ -10,6 +10,10 @@ from aido_schemas import EpisodeStart, protocol_agent_duckiebot1, PWMCommands, D
 from model import DDPG
 from wrappers import DTPytorchWrapper
 
+@dataclass
+class PytorchRLTemplateAgentConfig:
+    current_image: np.ndarray = np.zeros((120, 160, 3))
+
 
 class PytorchRLTemplateAgent:
     def __init__(self, load_model=False, model_path=None):
