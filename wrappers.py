@@ -1,13 +1,10 @@
 import numpy as np
 
 class DTPytorchWrapper():
-    def __init__(self, shape=(120, 160, 3), normalize=True):
+    def __init__(self, shape=(120, 160, 3)):
         self.shape = shape
-        self.normalize = True
+        self.transposed_shape = (shape[2], shape[0], shape[1])
 
     def preprocess(self, obs):
-        if self.normalize:
-            obs *= 255.0/obs.max()
-
         from scipy.misc import imresize
-        return imresize(obs, self.shape)
+        return imresize(obs, self.shape).transpose(2, 0, 1)
