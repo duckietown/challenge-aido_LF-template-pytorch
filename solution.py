@@ -41,7 +41,7 @@ class PytorchRLTemplateAgent:
 
         action = self.model.predict(observation)
 
-        return action
+        return action.astype(float)
 
     def on_received_get_commands(self, context: Context):
         pwm_left, pwm_right = self.compute_action(self.current_image)
