@@ -29,8 +29,7 @@ COPY wrappers.py /workspace
 # we make the workspace our working directory
 WORKDIR /workspace
 
-# DO NOT MODIFY: your submission won't run if you do
-ENV DUCKIETOWN_SERVER=evaluator
+ENV DISABLE_CONTRACTS=1
 
 # let's see what you've got there...
 CMD python solution.py

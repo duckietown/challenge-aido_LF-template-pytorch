@@ -1,7 +1,7 @@
-challenge: aido2_LF_r2-v4
+challenge:
+  - aido2_LF_r2-v4
 protocol: aido2_db18_agent_1
-user-label: "PyTorch template"
+user-label: "Baseline solution using reinforcement learning"
+user-payload: {}
 description: |
-    This is a simple template for an agent that uses PyTorch for inference.
-
-    [This code is documented here](https://docs.duckietown.org/DT18/AIDO/out/pytorch_template.html).
+    This is a simple baseline solution for an agent learns to imitate behavior from logs

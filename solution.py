@@ -15,7 +15,7 @@ class PytorchRLTemplateAgent:
     def __init__(self, load_model=False, model_path=None):
         self.preprocessor = DTPytorchWrapper()
         self.model = DDPG(state_dim=self.preprocessor.shape, action_dim=2, max_action=1, net_type="cnn")
-        self.current_image = None
+        self.current_image = np.zeros((640, 480, 3))
 
         if load_model:
             fp = model_path if model_path else "model"
@@ -36,9 +36,12 @@ class PytorchRLTemplateAgent:
         self.current_image = self.preprocessor.preprocess(obs)
 
     def compute_action(self, observation):
+        if observation.shape != self.preprocessor.transposed_shape:
+            observation = self.preprocessor.preprocessor(observation)
+
         action = self.model.predict(observation)
 
-        return action
+        return action.astype(float)
 
     def on_received_get_commands(self, context: Context):
         pwm_left, pwm_right = self.compute_action(self.current_image)
