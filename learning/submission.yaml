@@ -1,0 +1,7 @@
+challenge:
+  - aido2_LF_r2-v4
+protocol: aido2_db18_agent_1
+user-label: "Baseline solution using reinforcement learning"
+user-payload: {}
+description: |
+    This is a simple baseline solution for an agent learns to imitate behavior from logs
