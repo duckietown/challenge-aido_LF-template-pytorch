@@ -1,6 +1,10 @@
 challenge:
-  - aido2_LF_r2-v4
-protocol: aido2_db18_agent_1
+- aido2_LF_r3-v4-z2
+- aido2_LFV_r3-v4-z2
+- aido2_LFVI_r3-v4-z2
+
+# conventions + format
+protocol: aido2_db18_agent-z2
 user-label: "Baseline solution using reinforcement learning"
 user-payload: {}
 description: |
