@@ -38,9 +38,7 @@ class PytorchRLTemplateAgent:
     def compute_action(self, observation):
         if observation.shape != self.preprocessor.transposed_shape:
             observation = self.preprocessor.preprocessor(observation)
-
         action = self.model.predict(observation)
-
         return action.astype(float)
 
     def on_received_get_commands(self, context: Context):

@@ -1,11 +1,10 @@
-challenge:
-- aido2_LF_r3-v4-z2
-- aido2_LFV_r3-v4-z2
-- aido2_LFVI_r3-v4-z2
+# challenge name(s); defaults to all compatible challenges
+# challenge: [c1,c2]
 
 # conventions + format
 protocol: aido2_db18_agent-z2
-user-label: "Baseline solution using reinforcement learning"
+user-label: "PyTorch template"
 user-payload: {}
 description: |
     This is a simple baseline solution for an agent learns to imitate behavior from logs
+     [This code is documented here](https://docs.duckietown.org/DT19/AIDO/out/pytorch_template.html).
