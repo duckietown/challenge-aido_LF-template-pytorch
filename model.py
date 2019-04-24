@@ -6,6 +6,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+# this line test if there is a GPU available
+# remove if you don't care whether your model runs on a GPU or not
+assert torch.cuda.is_available(), "No CUDA-enabled GPU detected"
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
