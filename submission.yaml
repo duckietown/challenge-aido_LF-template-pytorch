@@ -8,3 +8,4 @@ user-label: "challenge-aido_LF-template-pytorch - Baseline solution using reinfo
 user-payload: {}
 description: |
     This is a simple baseline solution for an agent learns to imitate behavior from logs
+     [This code is documented here](https://docs.duckietown.org/DT19/AIDO/out/pytorch_template.html).
