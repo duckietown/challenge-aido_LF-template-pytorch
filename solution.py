@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
-from dataclasses import dataclass
-from typing import Tuple
-
 import numpy as np
 
 from aido_schemas import EpisodeStart, protocol_agent_duckiebot1, PWMCommands, Duckiebot1Commands, LEDSCommands, RGB, \
-    wrap_direct, Context, Duckiebot1Observations, JPGImage
+    wrap_direct, Context, Duckiebot1Observations, JPGImage, logger
 
 from model import DDPG
 from wrappers import DTPytorchWrapper
@@ -15,13 +12,17 @@ import io
 
 class PytorchRLTemplateAgent:
     def __init__(self, load_model=False, model_path=None):
+        logger.info('PytorchRLTemplateAgent init')
         self.preprocessor = DTPytorchWrapper()
+
         self.model = DDPG(state_dim=self.preprocessor.shape, action_dim=2, max_action=1, net_type="cnn")
         self.current_image = np.zeros((640, 480, 3))
 
         if load_model:
+            logger.info('PytorchRLTemplateAgent loading models')
             fp = model_path if model_path else "model"
             self.model.load(fp, "models", for_inference=True)
+        logger.info('PytorchRLTemplateAgent init complete')
 
     def init(self, context: Context):
         context.info('init()')
@@ -39,7 +40,7 @@ class PytorchRLTemplateAgent:
 
     def compute_action(self, observation):
         if observation.shape != self.preprocessor.transposed_shape:
-            observation = self.preprocessor.preprocessor(observation)
+            observation = self.preprocessor.preprocess(observation)
         action = self.model.predict(observation)
         return action.astype(float)
 
@@ -70,6 +71,7 @@ def jpg2rgb(image_data: bytes) -> np.ndarray:
 
 def main():
     node = PytorchRLTemplateAgent()
+    logger.info(f'node attributes: {node.__dict__}')
     protocol = protocol_agent_duckiebot1
     wrap_direct(node=node, protocol=protocol)
 
