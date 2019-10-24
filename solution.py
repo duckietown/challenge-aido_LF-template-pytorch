@@ -46,6 +46,9 @@ class PytorchRLTemplateAgent:
     def on_received_get_commands(self, context: Context):
         pwm_left, pwm_right = self.compute_action(self.current_image)
 
+        pwm_left = float(np.clip(pwm_left, -1, +1))
+        pwm_right = float(np.clip(pwm_right, -1, +1))
+
         grey = RGB(0.0, 0.0, 0.0)
         led_commands = LEDSCommands(grey, grey, grey, grey, grey)
         pwm_commands = PWMCommands(motor_left=pwm_left, motor_right=pwm_right)
