@@ -70,8 +70,7 @@ def jpg2rgb(image_data: bytes) -> np.ndarray:
     return data
 
 def main():
-    node = PytorchRLTemplateAgent()
-    logger.info(f'node attributes: {node.__dict__}')
+    node = PytorchRLTemplateAgent() 
     protocol = protocol_agent_duckiebot1
     wrap_direct(node=node, protocol=protocol)
 
