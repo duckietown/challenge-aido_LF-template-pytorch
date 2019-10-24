@@ -1,5 +1,5 @@
+
 import numpy as np
-from scipy.ndimage import zoom
 
 class DTPytorchWrapper():
     def __init__(self, shape=(120, 160, 3)):
@@ -7,4 +7,5 @@ class DTPytorchWrapper():
         self.transposed_shape = (shape[2], shape[0], shape[1])
 
     def preprocess(self, obs):
-        return zoom(obs, self.shape).transpose(2, 0, 1)
+        from PIL import Image
+        return np.array(Image.fromarray(obs).resize(self.shape[0:2])).transpose(2, 0, 1)

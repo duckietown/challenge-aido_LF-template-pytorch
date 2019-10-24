@@ -12,7 +12,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
      rm -rf /var/lib/apt/lists/*
 
 # let's create our workspace, we don't want to clutter the container
-RUN rm -r /workspace; mkdir /workspace
+RUN rm -rf /workspace; mkdir /workspace
 
 # here, we install the requirements, some requirements come by default
 # you can add more if you need to in requirements.txt
