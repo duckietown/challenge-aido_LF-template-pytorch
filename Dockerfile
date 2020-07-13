@@ -1,6 +1,6 @@
 # Definition of Submission container
-
-FROM duckietown/aido3-base-python3:daffy
+ARG AIDO_REGISTRY
+FROM ${AIDO_REGISTRY}/duckietown/aido-base-python3:daffy-aido4
 
 # DO NOT MODIFY: your submission won't run if you do
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
@@ -13,11 +13,15 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
 
 # let's create our workspace, we don't want to clutter the container
 RUN rm -rf /workspace; mkdir /workspace
+WORKDIR /workspace
+
+ARG PIP_INDEX_URL
+ENV PIP_INDEX_URL=${PIP_INDEX_URL}
 
 # here, we install the requirements, some requirements come by default
 # you can add more if you need to in requirements.txt
-COPY requirements.txt /workspace
-RUN pip install -r /workspace/requirements.txt
+COPY requirements.* ./
+RUN pip install -r requirements.resolved
 
 # let's copy all our solution files to our workspace
 # if you have more file use the COPY command to move them to the workspace
@@ -27,9 +31,7 @@ COPY model.py /workspace
 COPY wrappers.py /workspace
 
 # we make the workspace our working directory
-WORKDIR /workspace
 
-ENV DISABLE_CONTRACTS=1
 
 RUN python -c "import solution; import wrappers; import model"
 
