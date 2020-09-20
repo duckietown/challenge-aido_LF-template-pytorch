@@ -1,6 +1,6 @@
 # Definition of Submission container
 ARG AIDO_REGISTRY
-FROM ${AIDO_REGISTRY}/duckietown/aido-base-python3:daffy-aido4
+FROM ${AIDO_REGISTRY}/duckietown/aido-base-python3:daffy
 
 # DO NOT MODIFY: your submission won't run if you do
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
@@ -17,11 +17,12 @@ WORKDIR /workspace
 
 ARG PIP_INDEX_URL
 ENV PIP_INDEX_URL=${PIP_INDEX_URL}
+RUN echo PIP_INDEX_URL=${PIP_INDEX_URL}
 
 # here, we install the requirements, some requirements come by default
 # you can add more if you need to in requirements.txt
 COPY requirements.* ./
-RUN pip install -r requirements.resolved
+RUN pip install --use-feature=2020-resolver -r requirements.resolved
 
 # let's copy all our solution files to our workspace
 # if you have more file use the COPY command to move them to the workspace

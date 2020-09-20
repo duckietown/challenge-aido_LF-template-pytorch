@@ -9,7 +9,7 @@ build_options=\
 repo=challenge-aido_lf-template-pytorch
 #repo=$(shell basename -s .git `git config --get remote.origin.url`)
 branch=$(shell git rev-parse --abbrev-ref HEAD)
-branch=daffy-aido4
+branch=daffy
 tag=$(AIDO_REGISTRY)/duckietown/$(repo):$(branch)
 
 build:
