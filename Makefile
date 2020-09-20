@@ -22,7 +22,9 @@ push: build
 	docker push $(tag)
 
 
-update-reqs: # todo
+update-reqs: 
+	pur --index-url $(PIP_INDEX_URL) -r requirements.txt -f -m '*' -o requirements.resolved
+	aido-update-reqs requirements.resolved
 
 submit: update-reqs
 	dts challenges submit
