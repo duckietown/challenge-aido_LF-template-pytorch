@@ -3,7 +3,7 @@
 
 # conventions + format
 protocol: aido2_db18_agent-z2
-user-label: "challenge-aido_LF-template-pytorch"
+user-label: "template-pytorch"
 user-payload: {}
 description: |
     This is a simple baseline solution for an agent learns to imitate behavior from logs

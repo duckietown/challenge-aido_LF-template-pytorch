@@ -2,7 +2,7 @@ opencv-python==4.4.0.42
 numpy==1.19.2
 aido-protocols-daffy==6.0.0
 duckietown-world-daffy==6.0.3
-duckietown-challenges-daffy==6.0.6
+duckietown-challenges-daffy==6.0.12
 pillow==7.2.0
 torch==1.6.0
 torchvision==0.7.0
