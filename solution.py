@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import numpy as np
 
-from aido_schemas import EpisodeStart, protocol_agent_duckiebot1, PWMCommands, Duckiebot1Commands, LEDSCommands, RGB, \
-    wrap_direct, Context, Duckiebot1Observations, JPGImage, logger
+from aido_schemas import EpisodeStart, protocol_agent_DB20, PWMCommands, DB20Commands, LEDSCommands, RGB, \
+    wrap_direct, Context, DB20Observations, JPGImage, logger
 
 from model import DDPG
 from wrappers import DTPytorchWrapper
@@ -33,7 +33,7 @@ class PytorchRLTemplateAgent:
     def on_received_episode_start(self, context: Context, data: EpisodeStart):
         context.info(f'Starting episode "{data.episode_name}".')
 
-    def on_received_observations(self, data: Duckiebot1Observations):
+    def on_received_observations(self, data: DB20Observations):
         camera: JPGImage = data.camera
         obs = jpg2rgb(camera.jpg_data)
         self.current_image = self.preprocessor.preprocess(obs)
@@ -53,7 +53,7 @@ class PytorchRLTemplateAgent:
         grey = RGB(0.0, 0.0, 0.0)
         led_commands = LEDSCommands(grey, grey, grey, grey, grey)
         pwm_commands = PWMCommands(motor_left=pwm_left, motor_right=pwm_right)
-        commands = Duckiebot1Commands(pwm_commands, led_commands)
+        commands = DB20Commands(pwm_commands, led_commands)
         context.write('commands', commands)
 
     def finish(self, context: Context):
@@ -70,8 +70,8 @@ def jpg2rgb(image_data: bytes) -> np.ndarray:
     return data
 
 def main():
-    node = PytorchRLTemplateAgent() 
-    protocol = protocol_agent_duckiebot1
+    node = PytorchRLTemplateAgent()
+    protocol = protocol_agent_DB20
     wrap_direct(node=node, protocol=protocol)
 
 
