@@ -1,4 +1,4 @@
-FROM frank1chude1qian/dt-ml-base:latest
+FROM duckietown/dt-machine-learning-base-environment:daffy-amd64
 
 # let's copy all our solution files to our workspace
 # if you have more file use the COPY command to move them to the workspace
