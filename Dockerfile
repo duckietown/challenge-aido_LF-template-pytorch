@@ -1,6 +1,6 @@
 # Definition of Submission container
 ARG AIDO_REGISTRY
-FROM ${AIDO_REGISTRY}/duckietown/aido-base-python3:daffy
+FROM ${AIDO_REGISTRY}/duckietown/aido-base-python3:daffy-amd64
 
 # DO NOT MODIFY: your submission won't run if you do
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
