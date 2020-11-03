@@ -2,6 +2,8 @@ FROM duckietown/dt-machine-learning-base-environment:daffy-amd64
 
 # let's copy all our solution files to our workspace
 # if you have more file use the COPY command to move them to the workspace
+WORKDIR /submission
+
 COPY solution.py /submission
 COPY models /submission/models
 COPY model.py /submission

@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
+import os
+
 import numpy as np
+import torch
 
 from aido_schemas import EpisodeStart, protocol_agent_DB20, PWMCommands, DB20Commands, LEDSCommands, RGB, \
     wrap_direct, Context, DB20Observations, JPGImage, logger
@@ -25,7 +28,22 @@ class PytorchRLTemplateAgent:
         logger.info('PytorchRLTemplateAgent init complete')
 
     def init(self, context: Context):
+        available = torch.cuda.is_available()
+        req = os.environ.get('AIDO_REQUIRE_GPU', None)
+        context.info(f'torch.cuda.is_available = {available!r} AIDO_REQUIRE_GPU = {req!r}')
         context.info('init()')
+        if available:
+            i = torch.cuda.current_device()
+            count = torch.cuda.device_count()
+            name = torch.cuda.get_device_name(i)
+            context.info(f'device {i} of {count}; name = {name!r}')
+
+        else:
+            if req is not None:
+                msg = 'I need a GPU; bailing.'
+                context.error(msg)
+                raise Exception(msg)
+
 
     def on_received_seed(self, data: int):
         np.random.seed(data)
