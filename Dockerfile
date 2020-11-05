@@ -29,7 +29,7 @@ RUN  pip3 install --use-feature=2020-resolver -r .requirements.txt
 
 # let's copy all our solution files to our workspace
 # if you have more file use the COPY command to move them to the workspace
-COPY solution.py /workspace
+COPY solution_template_pytorch.py /workspace
 COPY models /workspace/models
 COPY model.py /workspace
 COPY wrappers.py /workspace
@@ -37,7 +37,7 @@ COPY wrappers.py /workspace
 # we make the workspace our working directory
 
 
-RUN python -c "import solution; import wrappers; import model"
+RUN python3 -c "import solution; import wrappers; import model"
 
 # let's see what you've got there...
-CMD python solution.py
+CMD python3 solution_template_pytorch.py
