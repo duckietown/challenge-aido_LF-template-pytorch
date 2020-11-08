@@ -37,6 +37,6 @@ COPY wrappers.py /workspace
 
 
 
-RUN python3 -c "import solution_template_pytorch; import wrappers; import model"
+RUN python3 -c "import solution; import wrappers; import model"
 
 CMD python3 solution.py
