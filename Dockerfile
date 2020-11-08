@@ -30,15 +30,13 @@ RUN pip3 uninstall -y dataclasses
 
 # let's copy all our solution files to our workspace
 # if you have more file use the COPY command to move them to the workspace
-COPY solution_template_pytorch.py /workspace
+COPY solution.py /workspace
 COPY models /workspace/models
 COPY model.py /workspace
 COPY wrappers.py /workspace
 
-# we make the workspace our working directory
 
 
 RUN python3 -c "import solution_template_pytorch; import wrappers; import model"
 
-# let's see what you've got there...
 CMD python3 solution.py
