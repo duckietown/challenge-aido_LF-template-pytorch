@@ -2,18 +2,9 @@
 ARG AIDO_REGISTRY
 FROM ${AIDO_REGISTRY}/duckietown/dt-machine-learning-base-environment:daffy-amd64
 
-# DO NOT MODIFY: your submission won't run if you do
-RUN apt-get update -y && apt-get install -y --no-install-recommends \
-         gcc \
-         libc-dev\
-         git \
-         bzip2 \
-         python-tk && \
-     rm -rf /var/lib/apt/lists/*
-
-# let's create our workspace, we don't want to clutter the container
-RUN rm -rf /workspace; mkdir /workspace
-WORKDIR /workspace
+# let's copy all our solution files to our workspace
+# if you have more file use the COPY command to move them to the workspace
+WORKDIR /submission
 
 ARG PIP_INDEX_URL
 ENV PIP_INDEX_URL=${PIP_INDEX_URL}
@@ -35,8 +26,5 @@ COPY models /workspace/models
 COPY model.py /workspace
 COPY wrappers.py /workspace
 
-
-
-RUN python3 -c "import solution; import wrappers; import model"
-
-CMD python3 solution.py
+# let's see what you've got there...
+ENTRYPOINT ["python3", "solution.py"]
