@@ -18,22 +18,7 @@ class PytorchRLTemplateAgent:
         pass
 
     def init(self, context: Context,load_model=False, model_path=None):
-        available = torch.cuda.is_available()
-        req = os.environ.get('AIDO_REQUIRE_GPU', None)
-        context.info(f'torch.cuda.is_available = {available!r} AIDO_REQUIRE_GPU = {req!r}')
-        context.info('init()')
-        if available:
-            i = torch.cuda.current_device()
-            count = torch.cuda.device_count()
-            name = torch.cuda.get_device_name(i)
-            context.info(f'device {i} of {count}; name = {name!r}')
-
-        else:
-            if req is not None:
-                msg = 'I need a GPU; bailing.'
-                context.error(msg)
-                raise Exception(msg)
-
+        self.check_gpu_available(context)
         logger.info('PytorchRLTemplateAgent init')
         self.preprocessor = DTPytorchWrapper()
 
@@ -45,6 +30,22 @@ class PytorchRLTemplateAgent:
             fp = model_path if model_path else "model"
             self.model.load(fp, "models", for_inference=True)
         logger.info('PytorchRLTemplateAgent init complete')
+
+    def check_gpu_available(self,context: Context):
+        available = torch.cuda.is_available()
+        req = os.environ.get('AIDO_REQUIRE_GPU', None)
+        context.info(f'torch.cuda.is_available = {available!r} AIDO_REQUIRE_GPU = {req!r}')
+        context.info('init()')
+        if available:
+            i = torch.cuda.current_device()
+            count = torch.cuda.device_count()
+            name = torch.cuda.get_device_name(i)
+            context.info(f'device {i} of {count}; name = {name!r}')
+        else:
+            if req is not None:
+                msg = 'I need a GPU; bailing.'
+                context.error(msg)
+                raise Exception(msg)
 
 
     def on_received_seed(self, data: int):
