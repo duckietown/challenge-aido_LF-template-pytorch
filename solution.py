@@ -14,20 +14,10 @@ import io
 
 
 class PytorchRLTemplateAgent:
-    def __init__(self, load_model=False, model_path=None):
-        logger.info('PytorchRLTemplateAgent init')
-        self.preprocessor = DTPytorchWrapper()
+    def __init__(self):
+        pass
 
-        self.model = DDPG(state_dim=self.preprocessor.shape, action_dim=2, max_action=1, net_type="cnn")
-        self.current_image = np.zeros((640, 480, 3))
-
-        if load_model:
-            logger.info('PytorchRLTemplateAgent loading models')
-            fp = model_path if model_path else "model"
-            self.model.load(fp, "models", for_inference=True)
-        logger.info('PytorchRLTemplateAgent init complete')
-
-    def init(self, context: Context):
+    def init(self, context: Context,load_model=False, model_path=None):
         available = torch.cuda.is_available()
         req = os.environ.get('AIDO_REQUIRE_GPU', None)
         context.info(f'torch.cuda.is_available = {available!r} AIDO_REQUIRE_GPU = {req!r}')
@@ -43,6 +33,18 @@ class PytorchRLTemplateAgent:
                 msg = 'I need a GPU; bailing.'
                 context.error(msg)
                 raise Exception(msg)
+
+        logger.info('PytorchRLTemplateAgent init')
+        self.preprocessor = DTPytorchWrapper()
+
+        self.model = DDPG(state_dim=self.preprocessor.shape, action_dim=2, max_action=1, net_type="cnn")
+        self.current_image = np.zeros((640, 480, 3))
+
+        if load_model:
+            logger.info('PytorchRLTemplateAgent loading models')
+            fp = model_path if model_path else "model"
+            self.model.load(fp, "models", for_inference=True)
+        logger.info('PytorchRLTemplateAgent init complete')
 
 
     def on_received_seed(self, data: int):
