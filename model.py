@@ -137,7 +137,7 @@ class CriticCNN(nn.Module):
         return x
 
 
-class DDPG(object):
+class DDPG:
     def __init__(self, state_dim, action_dim, max_action, net_type):
         super(DDPG, self).__init__()
         assert net_type in ["cnn", "dense"]

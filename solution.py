@@ -7,7 +7,7 @@ import torch
 from aido_schemas import EpisodeStart, protocol_agent_DB20, PWMCommands, DB20Commands, LEDSCommands, RGB, \
     wrap_direct, Context, DB20Observations, JPGImage, logger
 
-from model import DDPG
+
 from wrappers import DTPytorchWrapper
 from PIL import Image
 import io
@@ -20,6 +20,7 @@ class PytorchRLTemplateAgent:
     def init(self, context: Context,load_model=False, model_path=None):
         self.check_gpu_available(context)
         logger.info('PytorchRLTemplateAgent init')
+        from model import DDPG
         self.preprocessor = DTPytorchWrapper()
 
         self.model = DDPG(state_dim=self.preprocessor.shape, action_dim=2, max_action=1, net_type="cnn")
