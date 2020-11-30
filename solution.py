@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 import os
+from typing import Optional
 
 import numpy as np
-import torch
+
 
 from aido_schemas import EpisodeStart, protocol_agent_DB20, PWMCommands, DB20Commands, LEDSCommands, RGB, \
     wrap_direct, Context, DB20Observations, JPGImage, logger
@@ -14,10 +15,12 @@ import io
 
 
 class PytorchRLTemplateAgent:
-    def __init__(self):
-        pass
+    def __init__(self, load_model: bool, model_path: Optional[str]):
+        self.load_model = load_model
+        self.model_path = model_path
 
-    def init(self, context: Context,load_model=False, model_path=None):
+
+    def init(self, context: Context):
         self.check_gpu_available(context)
         logger.info('PytorchRLTemplateAgent init')
         from model import DDPG
@@ -26,13 +29,14 @@ class PytorchRLTemplateAgent:
         self.model = DDPG(state_dim=self.preprocessor.shape, action_dim=2, max_action=1, net_type="cnn")
         self.current_image = np.zeros((640, 480, 3))
 
-        if load_model:
-            logger.info('PytorchRLTemplateAgent loading models')
-            fp = model_path if model_path else "model"
+        if self.load_model:
+            logger.info('Pytorch Template Agent loading models')
+            fp = self.model_path if self.model_path else "model"
             self.model.load(fp, "models", for_inference=True)
         logger.info('PytorchRLTemplateAgent init complete')
 
     def check_gpu_available(self,context: Context):
+        import torch
         available = torch.cuda.is_available()
         req = os.environ.get('AIDO_REQUIRE_GPU', None)
         context.info(f'torch.cuda.is_available = {available!r} AIDO_REQUIRE_GPU = {req!r}')
@@ -92,7 +96,7 @@ def jpg2rgb(image_data: bytes) -> np.ndarray:
     return data
 
 def main():
-    node = PytorchRLTemplateAgent()
+    node = PytorchRLTemplateAgent(load_model=False, model_path=None)
     protocol = protocol_agent_DB20
     wrap_direct(node=node, protocol=protocol)
 

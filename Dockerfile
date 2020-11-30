@@ -20,5 +20,5 @@ COPY models /submission/models
 COPY model.py /submission
 COPY wrappers.py /submission
 
-# let's see what you've got there...
+
 ENTRYPOINT ["python3", "solution.py"]
