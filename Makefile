@@ -1,10 +1,7 @@
 
 build:
-	dts build_utils aido-container-build --use-branch daffy --ignore-untagged
+	dts build_utils aido-container-build --use-branch daffy --ignore-untagged --push
 
-
-push: build
-	dts build_utils aido-container-push --use-branch daffy
 
 
 
@@ -13,4 +10,4 @@ submit:
 
 
 submit-bea:
-	dts challenges submit --impersonate 1639   --retire-same-label
+	dts challenges submit --impersonate 1639  --retire-same-label

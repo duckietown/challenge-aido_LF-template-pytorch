@@ -1,17 +1,21 @@
 # Definition of Submission container
 ARG AIDO_REGISTRY=docker.io
-FROM ${AIDO_REGISTRY}/duckietown/dt-machine-learning-base-environment:daffy-amd64
+ARG ARCH=amd64
+ARG MAJOR=daffy
+ARG BASE_TAG=${MAJOR}-${ARCH}
+
+
+FROM ${AIDO_REGISTRY}/duckietown/dt-machine-learning-base-environment:${BASE_TAG}
 
 ARG PIP_INDEX_URL="https://pypi.org/simple"
 ENV PIP_INDEX_URL=${PIP_INDEX_URL}
 
 # Setup any additional pip packages
-RUN pip3 install -U "pip>=20.2"
 COPY requirements.* ./
 RUN cat requirements.* > .requirements.txt
-RUN  pip3 install --use-feature=2020-resolver -r .requirements.txt
+RUN python3 -m pip install  -r .requirements.txt
 
-RUN pip3 uninstall -y dataclasses
+RUN python3 -m pip uninstall -y dataclasses
 
 # let's copy all our solution files to our workspace
 WORKDIR /submission

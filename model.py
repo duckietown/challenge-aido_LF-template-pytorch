@@ -55,7 +55,7 @@ class ActorCNN(nn.Module):
         self.bn3 = nn.BatchNorm2d(32)
         self.bn4 = nn.BatchNorm2d(32)
 
-        self.dropout = nn.Dropout(.5)
+        self.dropout = nn.Dropout(0.5)
 
         self.lin1 = nn.Linear(flat_size, 512)
         self.lin2 = nn.Linear(512, action_dim)
@@ -118,7 +118,7 @@ class CriticCNN(nn.Module):
         self.bn3 = nn.BatchNorm2d(32)
         self.bn4 = nn.BatchNorm2d(32)
 
-        self.dropout = nn.Dropout(.5)
+        self.dropout = nn.Dropout(0.5)
 
         self.lin1 = nn.Linear(flat_size, 256)
         self.lin2 = nn.Linear(256 + action_dim, 128)
@@ -222,12 +222,16 @@ class DDPG:
                 target_param.data.copy_(tau * param.data + (1 - tau) * target_param.data)
 
     def save(self, filename, directory):
-        torch.save(self.actor.state_dict(), '{}/{}_actor.pth'.format(directory, filename))
-        torch.save(self.critic.state_dict(), '{}/{}_critic.pth'.format(directory, filename))
+        torch.save(self.actor.state_dict(), "{}/{}_actor.pth".format(directory, filename))
+        torch.save(self.critic.state_dict(), "{}/{}_critic.pth".format(directory, filename))
 
     def load(self, filename, directory, for_inference=False):
-        self.actor.load_state_dict(torch.load('{}/{}_actor.pth'.format(directory, filename), map_location=device))
-        self.critic.load_state_dict(torch.load('{}/{}_critic.pth'.format(directory, filename), map_location=device))
+        self.actor.load_state_dict(
+            torch.load("{}/{}_actor.pth".format(directory, filename), map_location=device)
+        )
+        self.critic.load_state_dict(
+            torch.load("{}/{}_critic.pth".format(directory, filename), map_location=device)
+        )
         if for_inference:
             # If we're not learning anymore, set model layers to
             # test mode (this disables dropout and changes batchnorm).
