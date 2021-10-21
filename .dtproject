@@ -3,4 +3,3 @@ TYPE=template-aido
 TYPE_VERSION=1
 CONTAINER_TARGET=duckietown/challenge-aido_lf-template-pytorch:daffy-amd64
 CONTAINER_BUILD_COMMAND=dts build_utils aido-container-build --use-branch daffy --ignore-untagged
-
