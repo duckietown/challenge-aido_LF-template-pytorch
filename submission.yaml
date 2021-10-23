@@ -12,3 +12,4 @@ user-payload:
 description: |
     This is a simple baseline solution for an agent learns to imitate behavior from logs
      [This code is documented here](https://docs.duckietown.org/daffy/AIDO/out/pytorch_template.html).
+validation_challenge: aido-hello-sim-validation
