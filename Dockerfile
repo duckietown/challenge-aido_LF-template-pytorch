@@ -10,6 +10,7 @@ ARG PIP_INDEX_URL="https://pypi.org/simple"
 ENV PIP_INDEX_URL=${PIP_INDEX_URL}
 
 # install Torch
+ARG ARCH
 COPY assets/${ARCH} "${REPO_PATH}/install"
 RUN "${REPO_PATH}/install/install.sh"
 
