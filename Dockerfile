@@ -4,11 +4,14 @@ ARG ARCH=amd64
 ARG MAJOR=daffy
 ARG BASE_TAG=${MAJOR}-${ARCH}
 
-
 FROM ${DOCKER_REGISTRY}/duckietown/dt-machine-learning-base-environment:${BASE_TAG}
 
 ARG PIP_INDEX_URL="https://pypi.org/simple"
 ENV PIP_INDEX_URL=${PIP_INDEX_URL}
+
+# install Torch
+COPY assets/${ARCH} "${REPO_PATH}/install"
+RUN "${REPO_PATH}/install/install.sh"
 
 # Setup any additional pip packages
 COPY requirements.* ./
@@ -23,6 +26,5 @@ COPY solution.py /submission
 COPY models /submission/models
 COPY model.py /submission
 COPY wrappers.py /submission
-
 
 ENTRYPOINT ["python3", "solution.py"]
