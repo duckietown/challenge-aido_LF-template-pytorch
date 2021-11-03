@@ -25,4 +25,4 @@ COPY model.py /submission
 COPY wrappers.py /submission
 
 
-ENTRYPOINT ["python3", "solution.py"]
+CMD ["python3", "solution.py"]
