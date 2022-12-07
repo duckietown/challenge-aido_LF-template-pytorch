@@ -12,5 +12,8 @@ echo "Installing PyTorch v${PYTORCH_VERSION}..."
 pip3 install "/tmp/${PYTORCH_WHEEL_NAME}"
 rm "/tmp/${PYTORCH_WHEEL_NAME}"
 
+# install torchvision
+pip3 install torchvision==0.8.1
+
 # clean
 pip3 uninstall -y dataclasses
