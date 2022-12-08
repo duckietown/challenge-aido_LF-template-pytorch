@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eux
 
 # download PyTorch
 echo "Downloading PyTorch v${PYTORCH_VERSION}..."
