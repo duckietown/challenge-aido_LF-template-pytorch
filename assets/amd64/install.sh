@@ -2,9 +2,9 @@
 
 set -ex
 
-# install PyTorch
-pip3 install torch==1.7.1
-pip3 install torchvision==0.8.1
+# install PyTorch and Torchvision (versions are defined in the base image's Dockerfile)
+pip3 install torch==${PYTORCH_VERSION}
+pip3 install torchvision==${TORCHVISION_VERSION}
 
 # clean
 pip3 uninstall -y dataclasses
