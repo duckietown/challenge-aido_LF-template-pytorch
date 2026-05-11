@@ -1,15 +1,8 @@
 challenge:
-  - aido-LF*
-
-
-# conventions + format
-protocol: aido2_db18_agent-z2
+  - aido-LF-sim-validation
+protocol: aido6_embodied_sys
 user-label: "template-pytorch"
-user-payload:
-    features_required:
-        gpu: 1
-
+user-payload: {}
 description: |
-    This is a simple baseline solution for an agent learns to imitate behavior from logs
-     [This code is documented here](https://docs.duckietown.org/daffy/AIDO/out/pytorch_template.html).
-validation_challenge: aido-hello-sim-validation
+  This is a PyTorch submission scaffold for the ente Duckiematrix validation challenge.
+validation_challenge: aido-LF-sim-validation
