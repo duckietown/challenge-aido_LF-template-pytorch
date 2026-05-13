@@ -1,0 +1,7 @@
+# Exercise configuration file
+
+agent_base: "template_pytorch" # the agent base image to use
+ws_dir: "." # the repository root holds solution/, training/, and models/
+agent_run_cmd: "python3 -m solution.main" # the runtime entrypoint inside the image
+challenge: aido-LF-sim-validation
+ros: False

@@ -1,0 +1,6 @@
+# LIST YOUR PYTHON3 PACKAGES HERE
+aido-protocols==5.0.5
+git+https://github.com/duckietown/duckietown-messages.git@temporary
+git+https://github.com/duckietown/duckietown-sdk.git@temporary
+git+https://github.com/duckietown/gym-duckiematrix.git@temporary
+zuper-typing-z6==6.2.3
